@@ -8,6 +8,7 @@
         Apache Cordova Team
     </author>
     <content src="index.html" />
+    <preference name="StatusBarOverlaysWebView" value="false" />
     <plugin name="cordova-plugin-whitelist" version="1" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
@@ -23,9 +24,8 @@
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
     </platform>
-    <plugin name="cordova-plugin-iosrtc" spec="^1.4.5" />
     <engine name="ios" spec="^3.8.0" />
+    <plugin name="cordova-plugin-iosrtc" spec="^1.4.5" />
     <plugin name="cordova-plugin-device" spec="^1.0.1" />
-    <plugin name="org.apache.cordova.statusbar" spec="^0.1.10" />
-    <preference name="StatusBarOverlaysWebView" value="false" />
+    <plugin name="cordova-plugin-statusbar" spec="^1.0.1" />
 </widget>
