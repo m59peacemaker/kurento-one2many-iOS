@@ -28,3 +28,5 @@ npm install xcode -g (globally or locally)
 cordova platform add ios
 cordova run ios --device
 ```
+
+[This is the Dockerfile I use](http://pastebin.com/3ih5cqA2) for Kurento Media Server. I run it with --net=host to make things easier.
