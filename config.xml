@@ -24,8 +24,8 @@
         <allow-intent href="itms-apps:*" />
     </platform>
     <engine name="ios" spec="^3.8.0" />
-    <plugin name="cordova-plugin-iosrtc" spec="^1.4.5" />
-    <plugin name="cordova-plugin-device" spec="^1.0.1" />
-    <plugin name="cordova-plugin-statusbar" spec="^1.0.1" />
-    <plugin name="cordova-plugin-console" spec="^1.0.1" />
+    <plugin name="cordova-plugin-iosrtc" spec="1.4.5" />
+    <plugin name="cordova-plugin-device" spec="1.0.1" />
+    <plugin name="cordova-plugin-statusbar" spec="1.0.1" />
+    <plugin name="cordova-plugin-console" spec="1.0.1" />
 </widget>
