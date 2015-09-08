@@ -1,4 +1,4 @@
-var host = 'a.com';
+var host = 'a.com'; // the domain or IP where the node server and kurento media server are running
 
 document.addEventListener("deviceready", function() {
   if (window.device.platform === 'iOS') {
