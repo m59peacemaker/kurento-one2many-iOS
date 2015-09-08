@@ -4,7 +4,7 @@ document.addEventListener("deviceready", function() {
   setTimeout(function() {
     console.log(cordova.plugins);
   }, 10000);
-  cordova.plugins.StatusBar.overlaysWebView(false);
+  //cordova.plugins.StatusBar.overlaysWebView(false);
 
   if (window.device.platform === 'iOS') {
     alert('registering RTC globals!');
