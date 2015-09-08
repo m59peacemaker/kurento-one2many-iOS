@@ -1,5 +1,7 @@
 # Kurento One2Many iOS Demo
 
+Adapted from [Kurento's One2Many Demo](https://github.com/Kurento/kurento-tutorial-node/tree/master/kurento-one2many-call)
+
 Start [Kurento Media Server](https://www.kurento.org/docs/current/installation_guide.html) on port 8888 (default).
 
 Enter ./server and run `npm install` then start the server with `node server`
