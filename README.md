@@ -22,7 +22,7 @@ Visit localhost:8081 in a browser.
 Connect your iOS device to the Apple computer.
 
 ```sh
+npm install xcode -g (globally or locally)
 cordova platform add ios
-cordova build ios
 cordova run ios --device
 ```
