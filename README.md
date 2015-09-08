@@ -4,6 +4,8 @@ Start [Kurento Media Server](https://www.kurento.org/docs/current/installation_g
 
 Enter ./server and run `npm install` then start the server with `node server`
 
+Open ./www/index.js and set line 1 `var host = ` to the ip/domain where kms and the node server are running.
+
 ### Test in browser
 
 Serve ./www/index.html

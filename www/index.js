@@ -1,3 +1,5 @@
+var host = 'a.com';
+
 document.addEventListener("deviceready", function() {
   if (window.device.platform === 'iOS') {
     setTimeout(function() {
@@ -10,7 +12,7 @@ document.addEventListener("deviceready", function() {
   }
 });
 
-var ws = new WebSocket('ws://a.com:8080/one2many');
+var ws = new WebSocket('ws://'+host+':8080/one2many');
 var video;
 var webRtcPeer;
 
