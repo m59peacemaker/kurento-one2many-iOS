@@ -1,5 +1,9 @@
 document.addEventListener("deviceready", function() {
   if (window.device.platform === 'iOS') {
+    setTimeout(function() {
+      console.log(cordova.plugins);
+    }, 10000);
+    cordova.plugins.StatusBar.overlaysWebView(false);
     alert('registering RTC globals!');
     cordova.plugins.iosrtc.registerGlobals();
     window.getUserMedia = navigator.getUserMedia.bind(navigator);

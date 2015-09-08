@@ -8,7 +8,6 @@
         Apache Cordova Team
     </author>
     <content src="index.html" />
-    <preference name="StatusBarOverlaysWebView" value="false" />
     <plugin name="cordova-plugin-whitelist" version="1" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
