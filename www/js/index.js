@@ -97,8 +97,10 @@ function stuff() {
     if (!webRtcPeer) {
 
       var options = {
-        offerToReceiveAudio: true,
-        offerToReceiveVideo: true,
+        mediaConstraints: {
+          offerToReceiveAudio: true,
+          offerToReceiveVideo: true
+        },
         remoteVideo: video,
         onicecandidate : onIceCandidate
       }
