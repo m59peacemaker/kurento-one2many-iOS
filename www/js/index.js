@@ -1,11 +1,11 @@
 var host = 'a.com'; // the domain or IP where the node server and kurento media server are running
 
-document.addEventListener("deviceready", function() {
-  if (window.device.platform === 'iOS') {
-    cordova.plugins.iosrtc.registerGlobals();
+//document.addEventListener("deviceready", function() {
+  //if (window.device.platform === 'iOS') {
+    cordova && cordova.plugins.iosrtc.registerGlobals();
     window.getUserMedia = navigator.getUserMedia.bind(navigator);
-  }
-});
+  //}
+//});
 
 var ws = new WebSocket('ws://'+host+':8080/one2many');
 var video;
