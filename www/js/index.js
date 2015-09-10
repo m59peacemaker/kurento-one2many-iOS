@@ -97,7 +97,7 @@ function stuff() {
     if (!webRtcPeer) {
 
       var options = {
-        mediaConstraints: {
+        connectionConstraints: {
           offerToReceiveAudio: true,
           offerToReceiveVideo: true
         },
