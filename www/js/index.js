@@ -97,16 +97,13 @@ function stuff() {
     if (!webRtcPeer) {
 
       var options = {
-        remoteVideo: video,
-        onicecandidate : onIceCandidate
-      }
-
-      if (window.cordova) {
-        options.connectionConstraints = {
+        connectionConstraints: {
           offerToReceiveAudio: true,
           offerToReceiveVideo: true
-        };
-      }
+        },
+        remoteVideo: video,
+        onicecandidate : onIceCandidate
+      };
 
       webRtcPeer = kurentoUtils.WebRtcPeer.WebRtcPeerRecvonly(options, function(error) {
         if(error) return onError(error);
