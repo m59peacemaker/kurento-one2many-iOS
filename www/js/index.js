@@ -3,8 +3,9 @@ var host = 'a.com'; // the domain or IP where the node server and kurento media 
 if (window.cordova) {
   document.addEventListener("deviceready", function() {
     if (window.device.platform === 'iOS') {
-      cordova && cordova.plugins.iosrtc.registerGlobals();
+      cordova.plugins.iosrtc.registerGlobals();
       window.getUserMedia = navigator.getUserMedia.bind(navigator);
+      cordova.plugins.iosrtc.debug.enable('iosrtc*');
     }
     stuff();
   });
