@@ -1,17 +1,29 @@
 var host = 'a.com'; // the domain or IP where the node server and kurento media server are running
 
-if (window.cordova) {
-  document.addEventListener("deviceready", function() {
-    if (window.device.platform === 'iOS') {
-      cordova.plugins.iosrtc.registerGlobals();
-      window.getUserMedia = navigator.getUserMedia.bind(navigator);
-      cordova.plugins.iosrtc.debug.enable('iosrtc*');
+function deviceReady() {
+  return new Promise(function(resolve, reject) {
+    if (window.cordova) {
+      document.addEventListener("deviceready", function() {
+        resolve();
+      });
+    } else {
+      resolve();
     }
-    stuff();
   });
-} else {
-  stuff();
 }
+
+function isDevice(device) {
+  return window.device && window.device.platform === device;
+}
+
+
+deviceReady().then(function() {
+  if (isDevice('iOS')) {
+    cordova.plugins.iosrtc.registerGlobals();
+    window.getUserMedia = navigator.getUserMedia.bind(navigator);
+  }
+  stuff();
+});
 
 function stuff() {
 
@@ -73,7 +85,7 @@ function stuff() {
       var options = {
         localVideo: video,
         onicecandidate : onIceCandidate
-        }
+      };
 
       webRtcPeer = kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(options, function(error) {
         if(error) return onError(error);
@@ -84,7 +96,7 @@ function stuff() {
   }
 
   function onOfferPresenter(error, offerSdp) {
-      if (error) return onError(error);
+    if (error) return onError(error);
 
     var message = {
       id : 'presenter',
@@ -94,14 +106,15 @@ function stuff() {
   }
 
   function viewer() {
-    if (!webRtcPeer) {
+    if (webRtcPeer) { return; }
 
-      var options = {
-        remoteVideo: video,
-        onicecandidate : onIceCandidate
-      };
+    var options = {
+      remoteVideo: video,
+      onicecandidate : onIceCandidate
+    };
 
-      if (window.cordova) {
+    deviceReady().then(function() {
+      if (isDevice('iOS')) {
         options.connectionConstraints = {
           offerToReceiveAudio: true,
           offerToReceiveVideo: true
@@ -110,10 +123,9 @@ function stuff() {
 
       webRtcPeer = kurentoUtils.WebRtcPeer.WebRtcPeerRecvonly(options, function(error) {
         if(error) return onError(error);
-
         this.generateOffer(onOfferViewer);
       });
-    }
+    });
   }
 
   function onOfferViewer(error, offerSdp) {
@@ -122,13 +134,11 @@ function stuff() {
     var message = {
       id : 'viewer',
       sdpOffer : offerSdp
-    }
+    };
     sendMessage(message);
   }
 
   function onIceCandidate(candidate) {
-    console.log('onIceCandidate');
-
        var message = {
           id : 'onIceCandidate',
           candidate : candidate
