@@ -1,5 +1,7 @@
 # Kurento One2Many iOS Demo
 
+I am majorly overhauling this demo, so the latest commits probably do not work at all. Download the v1.10 release for a working demo and then following these README instructions.
+
 Adapted from [Kurento's One2Many Demo](https://github.com/Kurento/kurento-tutorial-node/tree/master/kurento-one2many-call)
 
 Start [Kurento Media Server](https://www.kurento.org/docs/current/installation_guide.html) on port 8888 (default).

@@ -1,0 +1,10 @@
+{
+  "name": "kurento-one2many-call",
+  "description": "Kurento Browser JavaScript Tutorial",
+  "main": "index.html",
+  "license": "LGPL",
+  "private": true,
+  "dependencies": {
+    "webrtc-adapter": "~0.2.3"
+  }
+}
