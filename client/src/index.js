@@ -1,60 +1,47 @@
 var config = require('./config');
 var io = require('socket.io-client');
-var React = require('react');
 var device = require('app/device');
 
-var stateRouter = require('app/router');
+var vid = document.getElementById('video');
+vid.muted = true;
 
-stateRouter.addState({
-  name: 'home',
-  route: '/',
-  template: require('./states/home/index.js')
-});
-stateRouter.addState({
-  name: 'broadcaster',
-  route: '/broadcaster',
-  template: require('./states/broadcaster/index.js')
-});
-stateRouter.addState({
-  name: 'viewer',
-  route: '/viewer',
-  template: require('./states/viewer/index.js')
-});
-stateRouter.addState({
-  name: 'nest-parent',
-  route: '/nest-parent',
-  template: require('./states/nest-parent/index.js')
-});
-stateRouter.addState({
-  name: 'nest-parent.child-1',
-  route: '/1/:foo',
-  template: require('./states/nest-parent/child-1/index.js'),
-});
-stateRouter.addState({
-  name: 'nest-parent.child-2',
-  route: '/2',
-  template: require('./states/nest-parent/child-2/index.js'),
-  defaultChild: 'crazy-nest'
-});
-stateRouter.addState({
-  name: 'nest-parent.child-2.crazy-nest',
-  route: '/crazy',
-  template: require('./states/nest-parent/child-2/crazy-nest/index.js')
-});
-
-stateRouter.evaluateCurrentRoute('home');
-
-
-/*
 device.ready().then(function() {
   if (device.is('iOS')) {
+    cordova.plugins.iosrtc.debug.enable('iosrtc*');
     cordova.plugins.iosrtc.registerGlobals();
   }
-  Router.run(routes, function (Handler) {
-    React.render(<Handler/>, document.body);
-  });
+  foo();
 });
-*/
+
+function getCameraIds() {
+  return navigator.mediaDevices.enumerateDevices().then(function(devices) {
+    return devices.filter(function(device) {
+      return device.kind === 'videoinput' || device.kind === 'video' ? device.deviceId : null;
+    }).map(function(camera) {
+      return camera.deviceId;
+    });
+  });
+}
+
+function foo() {
+  getCameraIds().then(function(cameras) {
+    navigator.getUserMedia({
+      audio: true,
+      video: {
+        mandatory: {
+          sourceId: cameras[1] ? cameras[1] : cameras[0]
+        }
+      }
+    }, function(stream) {
+      vid.srcObject = stream;
+      vid.load();
+      vid.play();
+    }, function(err) {
+      console.log(err);
+    });
+  });
+}
+
 function stuff() {
 
   var pc;
@@ -194,8 +181,4 @@ function stuff() {
     }
   }
 
-  function sendMessage(message) {
-    var jsonMessage = JSON.stringify(message);
-    ws.send(jsonMessage);
-  }
 }
