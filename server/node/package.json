@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "scripts": {},
+  "dependencies": {
+    "bluebird": "^2.10.1",
+    "kurento-client": "^6.1.0",
+    "mkdirp": "^0.5.1",
+    "socket.io": "^1.3.7",
+    "uuid-v4": "^0.1.0"
+  },
+  "devDependencies": {}
+}

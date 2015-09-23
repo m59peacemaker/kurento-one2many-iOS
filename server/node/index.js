@@ -1,10 +1,9 @@
-var kurento          = require('kurento-client');
+var kurento          = require('app/kurento-client');
 var http             = require('http');
 var Promise          = require('bluebird');
 var config           = require('app/config');
-var setupBroadcaster = require('./lib/setup-broadcaster');
-var setupViewer      = require('./lib/setup-viewer');
-
+var setupBroadcaster = require('app/sockets/broadcaster');
+var setupViewer      = require('app/sockets/viewer');
 
 var server = http.createServer(function(req, res) {
   res.end('Hello.');
@@ -19,6 +18,6 @@ kurento(config.kmsUri, function(err, client) {
   setupViewer(io, client);
 });
 
-server.listen(port, function() {
-  console.log('Listening on port: '+port);
+server.listen(config.port, function() {
+  console.log('Listening on port: '+config.port);
 });
