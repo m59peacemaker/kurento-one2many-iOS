@@ -1,65 +1,63 @@
 var ws = new WebSocket('wss://' + location.host + '/one2many')
 var vid = document.createElement('video')
-vid.autoplay = true;
+vid.autoplay = true
 document.body.appendChild(vid)
-var pc;
-var queue = [];
-var ready = false;
+var pc = null
+var queue = []
+var ready = false
 
 function sendQueue() {
   queue = queue.filter(function(candidate) {
-    pc.addIceCandidate(new RTCIceCandidate(candidate));
-  });
+    pc.addIceCandidate(new RTCIceCandidate(candidate))
+  })
 }
 
 ws.addEventListener('open', viewer)
 
 ws.onmessage = function(message) {
-  var parsedMessage = JSON.parse(message.data);
+  var parsedMessage = JSON.parse(message.data)
   switch (parsedMessage.id) {
     case 'viewerResponse':
       viewerResponse(parsedMessage)
-      break;
+      break
     case 'iceCandidate':
-      queue.push(parsedMessage.candidate);
+      queue.push(parsedMessage.candidate)
       if (ready) {
-        sendQueue();
+        sendQueue()
       }
-      break;
+      break
   }
 }
 
 function sendMessage(message) {
-  var jsonMessage = JSON.stringify(message);
-  ws.send(jsonMessage);
+  var jsonMessage = JSON.stringify(message)
+  ws.send(jsonMessage)
 }
 
 function error(err) {
-  throw err;
+  throw err
 }
 
 function viewer() {
-  pc = new RTCPeerConnection();
+  pc = new RTCPeerConnection()
   pc.addEventListener('icecandidate', function(event) {
     if (event.candidate) {
       sendMessage({
         id: 'onIceCandidate',
         candidate: event.candidate
-      });
+      })
     }
-  });
+  })
 
-  pc.createOffer(function(offer) {
-    pc.setLocalDescription(new RTCSessionDescription(offer), function() {
-      sendMessage({
-        id : 'viewer',
-        sdpOffer : offer.sdp
-      });
-    }, error);
-  }, error, {
+  createOffer(pc, {
     offerToReceiveAudio: true,
     offerToReceiveVideo: true
-  });
+  }).then(function(offer) {
+    sendMessage({
+      id : 'viewer',
+      sdpOffer : offer.sdp
+    })
+  })
 }
 
 function viewerResponse(msg) {
@@ -67,10 +65,20 @@ function viewerResponse(msg) {
     type: 'answer',
     sdp: msg.sdpAnswer
   }), function () {
-    sendQueue();
-    ready = true;
-    var stream = pc.getRemoteStreams()[0];
-    var url = URL.createObjectURL(stream);
+    sendQueue()
+    ready = true
+    var stream = pc.getRemoteStreams()[0]
+    var url = URL.createObjectURL(stream)
     vid.src = url
-  }, error);
+  }, error)
+}
+
+function createOffer(pc, constraints) {
+  return new Promise(function(resolve, reject) {
+    pc.createOffer(function(offer) {
+      pc.setLocalDescription(new RTCSessionDescription(offer), function() {
+        resolve(offer)
+      }, reject)
+    }, reject, constraints)
+  })
 }
