@@ -1,0 +1,14 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "scripts": {
+    "start": "./node_modules/@m59/reload-server/bin/cmd.js -p 8081"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@m59/reload-server": "^1.0.4"
+  }
+}
