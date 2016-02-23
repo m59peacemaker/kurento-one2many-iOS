@@ -20,11 +20,11 @@ var minimist = require('minimist');
 var ws = require('ws');
 var kurento = require('kurento-client');
 var fs    = require('fs');
-var https = require('https');
+var http = require('http');
 
 var argv = minimist(process.argv.slice(2), {
     default: {
-        as_uri: 'https://localhost:8443/',
+        as_uri: 'https://localhost:8080/',
         ws_uri: 'ws://localhost:8888/kurento'
     }
 });
@@ -52,7 +52,7 @@ var noPresenterMessage = 'No active presenter. Try again later...';
  */
 var asUrl = url.parse(argv.as_uri);
 var port = asUrl.port;
-var server = https.createServer(options, app).listen(port, function() {
+var server = http.createServer(app).listen(8080, function() {
     console.log('Kurento Tutorial started');
     console.log('Open ' + url.format(asUrl) + ' with a WebRTC capable browser');
 });

@@ -1,4 +1,5 @@
-var ws = new WebSocket('wss://' + location.host + '/one2many')
+var ws = new WebSocket('wss://api.' + location.host + '/one2many')
+
 var vid = document.createElement('video')
 vid.autoplay = true
 document.body.appendChild(vid)
@@ -12,16 +13,20 @@ function sendQueue() {
   })
 }
 
-ws.addEventListener('open', viewer)
-
 ws.onmessage = function(message) {
-  var parsedMessage = JSON.parse(message.data)
-  switch (parsedMessage.id) {
-    case 'viewerResponse':
-      viewerResponse(parsedMessage)
+  var msg = JSON.parse(message.data)
+  switch (msg.id) {
+    case 'presenterResponse':
+      pc.setRemoteDescription(new RTCSessionDescription({
+        type: 'answer',
+        sdp: msg.sdpAnswer
+      }), function() {
+        sendQueue()
+        ready = true
+      })
       break
     case 'iceCandidate':
-      queue.push(parsedMessage.candidate)
+      queue.push(msg.candidate)
       if (ready) {
         sendQueue()
       }
@@ -29,16 +34,13 @@ ws.onmessage = function(message) {
   }
 }
 
-function sendMessage(message) {
-  var jsonMessage = JSON.stringify(message)
-  ws.send(jsonMessage)
-}
+ws.addEventListener('open', presenter)
 
 function error(err) {
   throw err
 }
 
-function viewer() {
+function presenter() {
   pc = new RTCPeerConnection()
   pc.addEventListener('icecandidate', function(event) {
     if (event.candidate) {
@@ -48,29 +50,24 @@ function viewer() {
       })
     }
   })
-
-  createOffer(pc, {
-    offerToReceiveAudio: true,
-    offerToReceiveVideo: true
-  }).then(function(offer) {
-    sendMessage({
-      id : 'viewer',
-      sdpOffer : offer.sdp
+  navigator.getUserMedia({
+    audio: true,
+    video: true
+  }, function(stream) {
+    pc.addStream(stream)
+    vid.muted = true
+    vid.srcObject = stream
+    createOffer(pc).then(function(offer) {
+      sendMessage({
+        id: 'presenter',
+        sdpOffer: offer.sdp
+      })
     })
-  })
+  }, error)
 }
 
-function viewerResponse(msg) {
-  pc.setRemoteDescription(new RTCSessionDescription({
-    type: 'answer',
-    sdp: msg.sdpAnswer
-  }), function () {
-    sendQueue()
-    ready = true
-    var stream = pc.getRemoteStreams()[0]
-    var url = URL.createObjectURL(stream)
-    vid.src = url
-  }, error)
+function sendMessage(msg) {
+  ws.send(JSON.stringify(msg))
 }
 
 function createOffer(pc, constraints) {

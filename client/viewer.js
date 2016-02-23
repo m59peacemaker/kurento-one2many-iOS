@@ -1,4 +1,4 @@
-var ws = new WebSocket('wss://' + location.host + '/one2many')
+var ws = new WebSocket('wss://api.' + location.host + '/one2many')
 
 var vid = document.createElement('video')
 vid.autoplay = true
@@ -13,20 +13,16 @@ function sendQueue() {
   })
 }
 
+ws.addEventListener('open', viewer)
+
 ws.onmessage = function(message) {
-  var msg = JSON.parse(message.data)
-  switch (msg.id) {
-    case 'presenterResponse':
-      pc.setRemoteDescription(new RTCSessionDescription({
-        type: 'answer',
-        sdp: msg.sdpAnswer
-      }), function() {
-        sendQueue()
-        ready = true
-      })
+  var parsedMessage = JSON.parse(message.data)
+  switch (parsedMessage.id) {
+    case 'viewerResponse':
+      viewerResponse(parsedMessage)
       break
     case 'iceCandidate':
-      queue.push(msg.candidate)
+      queue.push(parsedMessage.candidate)
       if (ready) {
         sendQueue()
       }
@@ -34,13 +30,16 @@ ws.onmessage = function(message) {
   }
 }
 
-ws.addEventListener('open', presenter)
+function sendMessage(message) {
+  var jsonMessage = JSON.stringify(message)
+  ws.send(jsonMessage)
+}
 
 function error(err) {
   throw err
 }
 
-function presenter() {
+function viewer() {
   pc = new RTCPeerConnection()
   pc.addEventListener('icecandidate', function(event) {
     if (event.candidate) {
@@ -50,24 +49,29 @@ function presenter() {
       })
     }
   })
-  navigator.getUserMedia({
-    audio: true,
-    video: true
-  }, function(stream) {
-    pc.addStream(stream)
-    vid.muted = true
-    vid.srcObject = stream
-    createOffer(pc).then(function(offer) {
-      sendMessage({
-        id: 'presenter',
-        sdpOffer: offer.sdp
-      })
+
+  createOffer(pc, {
+    offerToReceiveAudio: true,
+    offerToReceiveVideo: true
+  }).then(function(offer) {
+    sendMessage({
+      id : 'viewer',
+      sdpOffer : offer.sdp
     })
-  }, error)
+  })
 }
 
-function sendMessage(msg) {
-  ws.send(JSON.stringify(msg))
+function viewerResponse(msg) {
+  pc.setRemoteDescription(new RTCSessionDescription({
+    type: 'answer',
+    sdp: msg.sdpAnswer
+  }), function () {
+    sendQueue()
+    ready = true
+    var stream = pc.getRemoteStreams()[0]
+    var url = URL.createObjectURL(stream)
+    vid.src = url
+  }, error)
 }
 
 function createOffer(pc, constraints) {
