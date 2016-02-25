@@ -1,7 +1,8 @@
 project = o2m
 
 node_image = ${project}_node
-kms_image  = ${project}_kms
+# kms_image  = ${project}_kms
+kms_image  = ann_api_kms
 data_image = ubuntu:14.04
 
 node_container = ${project}_node
@@ -43,16 +44,26 @@ run_kms = docker run -d            \
 up-kms:
 	@${run_kms}
 
-run_node = docker run ${1}        \
-  --name ${node_container}        \
-  --net=host                      \
-  --volume-from ${data_container} \
-  -v $(shell pwd)/node:/app/node  \
+run_node = docker run ${1}         \
+  --name ${node_container}         \
+  --net=host                       \
+  --volumes-from ${data_container} \
+  -v $(shell pwd)/node:/app/node   \
   ${node_image}
 
 .PHONY: up-node
 up-node:
 	@$(call run_node,-it)
+#-----
+
+up_proxy = cp ./nginx.conf /etc/nginx/ && \
+  (service nginx start 2> /dev/null || service nginx reload)
+
+cp_ssl = mkdir -p /etc/nginx/ssl && cp -R ./ssl/* /etc/nginx/ssl/
+
+.PHONY: up-proxy
+up-proxy:
+	@${cp_ssl} && ${up_proxy}
 
 #-----
 

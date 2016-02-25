@@ -2,42 +2,38 @@ var gulp       = require('gulp');
 var browserify = require('browserify');
 var source     = require('vinyl-source-stream');
 var watchify   = require('watchify');
-var buffer     = require('vinyl-buffer');
 var del        = require('del');
 var merge      = require('lodash/object/merge');
 var liveServer = require("live-server");
 
-var deps = {
-  notIos: [
-    './vendor/webrtc-adapter/adapter.js'
-  ]
+var config = {
+  paths: {
+    build: './www',
+    copy: [
+      './src/index.html',
+      './src/app.css',
+    ]
+  }
 };
 
 gulp.task('default', ['build-live']);
 gulp.task('clean', clean);
 gulp.task('build', function() {
-  indexHtml();
-  js({
-    deps: deps.notIos
-  });
-});
-gulp.task('build-ios', function() {
-  indexHtml();
+  copyToBuild();
   js();
 });
 gulp.task('build-live', function() {
   devServer();
-  indexHtml();
+  copyToBuild();
   js({
-    deps: deps.notIos,
     watch: true
   });
 });
 
 function clean() {
   del([
-    './www/**',
-    '!./www'
+    config.paths.build+'/**',
+    '!'+config.paths.build
   ]);
 }
 
@@ -45,7 +41,7 @@ function devServer() {
   liveServer.start({
       port: 8081,
       host: '0.0.0.0',
-      root: './www',
+      root: config.paths.build,
       open: false,
       file: 'index.html'
   });
@@ -62,8 +58,6 @@ function js(opts) {
       './src/index.js'
     ])
   })
-    .transform(require('jadeify'))
-    .transform(require('babelify'))
   ;
 
   function bundle() {
@@ -74,7 +68,7 @@ function js(opts) {
         this.emit('end');
       })
       .pipe(source('index.js'))
-      .pipe(gulp.dest('./www'))
+      .pipe(gulp.dest(config.paths.build))
       .on('end', function() { 
         console.log('JS complete.'); 
       })
@@ -82,14 +76,14 @@ function js(opts) {
   }
 
   if (opts.watch) {
-    bundler = watchify(bundler).on('update', bundle);
+    bundler = watchify(bundler)
+      .transform(require('babelify'))
+      .on('update', bundle);
   }
 
   return bundle();
 }
 
-function indexHtml() {
-  return gulp.src('./src/index.html')
-    .pipe(gulp.dest('./www'))
-  ;
+function copyToBuild() {
+  return gulp.src(config.paths.copy, {base: './src'}).pipe(gulp.dest(config.paths.build));
 }

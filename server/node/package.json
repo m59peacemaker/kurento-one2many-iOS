@@ -2,7 +2,8 @@
   "private": true,
   "scripts": {},
   "dependencies": {
-    "bluebird": "^2.10.1",
+    "bluebird": "^2.10.2",
+    "express": "^4.13.3",
     "kurento-client": "^6.1.0",
     "mkdirp": "^0.5.1",
     "socket.io": "^1.3.7",
