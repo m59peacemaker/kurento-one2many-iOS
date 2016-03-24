@@ -1,3 +1,7 @@
+### branch `vanilla-app` has better code
+
+That branch is a work in progress - not setup for iOS yet, but the code is much better and doesn't use kurento's client-side library. I'll keep improving it as I get time.
+
 # Kurento One2Many iOS Demo
 
 Adapted from [Kurento's One2Many Demo](https://github.com/Kurento/kurento-tutorial-node/tree/master/kurento-one2many-call)
