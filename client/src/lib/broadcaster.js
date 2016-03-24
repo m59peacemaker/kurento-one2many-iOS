@@ -16,7 +16,7 @@ function Broadcaster() {
 
   const setupStream = () => {
     return navigator.mediaDevices.getUserMedia({
-      //audio: true,
+      audio: true,
       video: true
     })
     .then(stream => {
