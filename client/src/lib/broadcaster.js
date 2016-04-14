@@ -6,13 +6,13 @@ function Broadcaster() {
   const emitter = new EventEmitter()
   const pc = new RTCPeerConnection()
 
-  const emitError = (type, error) => emitter.emit('error', {type, error})
+  const emitError = (type, error) => emitter.emit('error', {...error, type})
 
-  pc.addEventListener('icecandidate', event => {
+  pc.onicecandidate = event => {
     if (event.candidate) {
       emitter.emit('icecandidate', event.candidate)
     }
-  })
+  }
 
   const setupStream = () => {
     return navigator.mediaDevices.getUserMedia({
